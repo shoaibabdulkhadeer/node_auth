@@ -36,26 +36,33 @@ const userSchema = new Schema({
         type: SchemaTypes.String,
         required: true
     },
+    emp_id: {
+        type: SchemaTypes.String,
+        required: true,
+      },
     dept: {
         type: SchemaTypes.String,
         required: true
     },
+    uname: {
+        type: String,
+        required: true,
+        unique: true, // Ensure unique usernames
+      },
     pwd: {
         type: SchemaTypes.String,
         required: true
     },
-
-    roles: [roleSchema],
-    createdAt: {
-        type: SchemaTypes.Date,
+    comm_email: {
+        type: String,
         required: true,
-        default: Date.now(),
     },
-    updatedAt: {
-        type: SchemaTypes.Date,
+    roles: [roleSchema],
+    active: {
+        type: Boolean,
         required: true,
-    }
-})
+      },
+},{timestamps: true})
 
 
 const UserAccount = model('userAccounts', userSchema)
