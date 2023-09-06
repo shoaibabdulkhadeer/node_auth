@@ -1,5 +1,5 @@
-import { findUserByNameAndPwd } from "../../database/dao/auth.dao";
 
+import { findUserByNameAndPwd } from "../../database/dao/auth.dao";
 
 import {compare} from "bcrypt";
 
@@ -25,9 +25,28 @@ const userlogin = async (loginuser:any, req: any) => {
   if (isPasswordValid) {
     req.session.userId = foundUser._id;
     req.session.userName = foundUser.name;
+    console.log(req.session.userName);
+    console.log(req.session.userId);
   }
 
   return 'Login successful';
 };
 
-export { userlogin }
+
+
+const userlogout = (req:any, res:any) => {
+  if (req.session) {
+    req.session.destroy((err:any) => {
+      if (err) {
+        console.error('Error destroying session:', err);
+      } else {
+        console.log('Session destroyed');
+      }
+    });
+  }
+
+  res.send('Logout successful');
+};
+
+
+export { userlogin ,userlogout } 

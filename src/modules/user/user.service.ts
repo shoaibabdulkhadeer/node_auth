@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import {hash} from "bcrypt";
-import { registeruserdao } from "../../database/dao/user.dao";
+import { registeruserdao, userdeletedao,userupdatedao } from "../../database/dao/user.dao";
 
 const userRegisterSvc = async (User: any) => {
   const { name, dept, pwd } = User;
@@ -32,4 +32,15 @@ const userRegisterSvc = async (User: any) => {
   await registeruserdao(newUser);
 };
 
-export { userRegisterSvc };
+
+
+const deleteuserSvc = (id:any) => {
+      return userdeletedao(id)
+}
+
+
+const updateuserSvc = (id:any,updatedData:any) => {
+  return  userupdatedao(id,updatedData)
+}
+
+export { userRegisterSvc,deleteuserSvc,updateuserSvc };

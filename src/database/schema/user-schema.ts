@@ -4,6 +4,7 @@ enum Roles {
     role1 = "Admin",
     role2 = "User"
 }
+
 const roleSchema = new Schema({
     rID: {
         type: SchemaTypes.ObjectId,
@@ -24,7 +25,6 @@ const roleSchema = new Schema({
         required: true,
     }
 })
-
 
 
 const userSchema = new Schema({
