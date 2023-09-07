@@ -45,22 +45,30 @@ const userSchema = new Schema({
         required: true
     },
     uname: {
-        type: String,
+        type: SchemaTypes.String,
         required: true,
-        unique: true, // Ensure unique usernames
+        unique: true, 
       },
     pwd: {
         type: SchemaTypes.String,
-        required: true
+        required: true,
+        // validate: {
+        //     validator: (value:any) => /^[a-zA-Z0-9]{8,15}$/.test(value),
+        //     message: 'Password must be 8-15 characters long and contain a combination of letters and numbers.'
+        // }
     },
     comm_email: {
-        type: String,
+        type: SchemaTypes.String,
         required: true,
+        validate: {
+            validator: (value:any) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
+            message: 'Communication email must be a valid email address.'
+        }
     },
     roles: [roleSchema],
     active: {
-        type: Boolean,
-        required: true,
+        type:SchemaTypes.Boolean,
+        default:false,
       },
 },{timestamps: true})
 

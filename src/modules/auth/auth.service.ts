@@ -1,7 +1,8 @@
-import { findUserByNameAndPwd } from "../../database/dao/auth.dao";
+import { findLoggedIndao, findUserByNameAndPwd } from "../../database/dao/auth.dao";
 import {compare} from "bcrypt";
 import * as jwt from 'jsonwebtoken';
 import loginSchema from "../../database/schema/login-schema";
+import { SUCCESS_MESSAGES, WARN_MESSAGES } from "../../shared/appMessages.schema";
 
 const userlogin = async (loginuser: any, req: any) => {
   const { uname, pwd } = loginuser;
@@ -10,6 +11,7 @@ const userlogin = async (loginuser: any, req: any) => {
     throw new Error('Both name and password must be provided for login');
   }
 
+  //in dao  
   const foundUser = await findUserByNameAndPwd(uname);
 
   if (!foundUser) {
@@ -22,11 +24,11 @@ const userlogin = async (loginuser: any, req: any) => {
     throw new Error('Invalid password');
   }
 
-  // Check if the user is already logged in
-  const existingLoginInfo = await loginSchema.findOne({ uid: foundUser.uID });
+  // Check if the user is already logged in login schema ---- IN DAO
+  const existingLoginInfo = await findLoggedIndao(foundUser.uID);
 
   if (existingLoginInfo) {
-     return 'User is already logged in';
+     return WARN_MESSAGES.ALREADY_LOGGED_IN;  //USER ALREADY_LOGGED_IN
   }
 
   // Create a new record in loginSchema
@@ -49,7 +51,7 @@ const userlogin = async (loginuser: any, req: any) => {
   );
 
   console.log(token);
-  return { message: 'Login successful', token };
+  return { message: SUCCESS_MESSAGES.LOGIN, token };
 };
 
  
@@ -65,18 +67,17 @@ const userlogin = async (loginuser: any, req: any) => {
   };
   
 
-
 export { userlogin ,userlogout } 
-
 
 
 export const verifyToken = (req:any, res:any, next:any) => {
   const authHeader = req.headers.authorization;
   if (authHeader) {
-    jwt.verify(authHeader, 'your-secret-key', (err:any) => {
+    jwt.verify(authHeader, 'your-secret-key', (err:any,data:any) => {
       if (err) {
         return res.sendStatus(403);
       }
+      console.log(data)
       next();
     });
   } else {

@@ -1,5 +1,5 @@
 import {Request,Response} from 'express';
-import { deleteuserSvc, userRegisterSvc,updateuserSvc } from './user.service';
+import { deleteuserSvc, userRegisterSvc,updateuserSvc, getusersSvc } from './user.service';
 
 const register = async  (req:Request,res:Response) => {
           const newUser =  req.body
@@ -21,4 +21,16 @@ const updateuser = async (req: Request, res: Response) => {
   };
   
 
-export {register,deleteuser,updateuser} 
+  const getusers = async (req: Request, res: Response) => {
+    const pageId = parseInt(req.query.pageId as string, 10) || 1;
+    const pageLimit = parseInt(req.query.pageLimit as string, 10) || 10;
+ 
+    const allusers = await getusersSvc(pageId, pageLimit);
+ 
+    res.send({
+      message: "All users",
+      allusers,
+    });
+ }
+
+export {register,deleteuser,updateuser,getusers} 

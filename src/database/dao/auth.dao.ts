@@ -1,5 +1,5 @@
 import { UserAccount } from "../../database/schema/user-schema";
-
+import loginSchema from "../schema/login-schema";
 
 const findUserByNameAndPwd = async (uname:any) => {
   try {
@@ -10,4 +10,19 @@ const findUserByNameAndPwd = async (uname:any) => {
   }
 };
 
-export { findUserByNameAndPwd };
+const findLoggedIndao = async (uID:any) => {
+  return await loginSchema.findOne({ uid: uID });
+}
+
+
+const findByIdAndDeleteDao = async (id:any) => {
+  try {
+    const deletedDocument = await loginSchema.findByIdAndDelete(id).exec();
+    return deletedDocument;
+  } catch (error) {
+    console.error('Error removing document from the database:', error);
+    throw error;
+  }
+};
+
+export { findUserByNameAndPwd,findLoggedIndao,findByIdAndDeleteDao };
