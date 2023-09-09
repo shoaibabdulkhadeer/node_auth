@@ -3,6 +3,7 @@ import {compare} from "bcrypt";
 import * as jwt from 'jsonwebtoken';
 import loginSchema from "../../database/schema/login-schema";
 import { SUCCESS_MESSAGES, WARN_MESSAGES } from "../../shared/appMessages.schema";
+import { NextFunction, Response } from "express";
 
 const userlogin = async (loginuser: any, req: any) => {
   const { uname, pwd } = loginuser;
@@ -54,34 +55,43 @@ const userlogin = async (loginuser: any, req: any) => {
   return { message: SUCCESS_MESSAGES.LOGIN, token };
 };
 
- 
-
-  const userlogout = async (id: any) => {
+ const userlogout = async (id: any) => {
     try {
       await loginSchema.findByIdAndDelete(id).exec();
-    
     } catch (error) {
       console.error('Error removing login information from the database:', error);
       throw error; 
     }
   };
   
-
 export { userlogin ,userlogout } 
 
 
-export const verifyToken = (req:any, res:any, next:any) => {
-  const authHeader = req.headers.authorization;
-  if (authHeader) {
-    jwt.verify(authHeader, 'your-secret-key', (err:any,data:any) => {
-      if (err) {
-        return res.sendStatus(403);
-      }
-      console.log(data)
+export const verifyToken = async (req: any, res: Response, next: NextFunction) => {
+  const jwtKey = "your-secret-key";
+  console.log("im in verify");
+  try {
+    const token: any = req.headers["authorization"];
+    if (token && jwtKey) {
+      const tokenSplit = token.split(" ")[1];
+      console.log(tokenSplit, "im in split");
+      req.claims = jwt.verify(tokenSplit, jwtKey);
+      console.log("im going to next");
       next();
-    });
-  } else {
-    res.sendStatus(401);
+    } else {
+      console.log("im in else");
+      res.sendStatus(401); // Send Unauthorized status
+    }
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(401); // Send Unauthorized status
   }
 };
 
+
+
+export const session =  async (req:any,res:Response,next:NextFunction) => {
+  const {exp} = req.claims;
+  console.log(exp , "i am expiry date");  
+  next()
+}

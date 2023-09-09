@@ -14,7 +14,7 @@ const registeruserdao = async (newUser:any) => {
       return createResponse(httpStatus.CONFLICT, WARN_MESSAGES.CONFLICT);
 
     }
-    const registerUser = await  UserAccount.create(newUser)
+    await  UserAccount.create(newUser)
   //  return  registerUser.save()
 }
 
